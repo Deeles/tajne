@@ -1,3 +1,4 @@
+import os
 import json
 from typing import Dict
 
@@ -6,27 +7,22 @@ from classes.token import Token
 
 
 def run():
-    loaded_function_dict = utils.get_loaded_function_dict(r'token_history/functions.json')
-
-    # iterable = range(14100, 14101)
-    iterable = [14092, 14093, 14100]
+    loaded_function_dict = utils.get_loaded_function_dict(r'functions.json')
+    directory = r'token_history/'
 
     tokens = []
-    for i in iterable:
-        try:
-            dictionary = load_json(i)
-            token = Token(dictionary)
-            tokens.append(token)
-            print(token.listed_with_liquidity(loaded_function_dict))
-            hour_moooooooney = token.get_hour_mooooooooney(loaded_function_dict)
-            utils.plot(hour_moooooooney, 'Wrapped BNB', token.date_added)
-        except Exception as e:
-            print(e)
+    for filename in os.listdir(directory):
+        file_name = os.path.join(directory, filename)
+        dictionary = load_json(file_name)
+        token = Token(dictionary)
+        tokens.append(token)
+        print(token.listed_with_liquidity(loaded_function_dict))
+        hour_moooooooney, price = token.get_hour_mooooooooney(loaded_function_dict)
+        utils.plot(token.name, hour_moooooooney, price, 'Wrapped BNB', token.date_added)
 
 
-def load_json(number: int) -> Dict:
-    file = f'token_history/{number}.json'
-    with open(file) as reader:
+def load_json(file_name: str) -> Dict:
+    with open(file_name) as reader:
         return json.load(reader)
 
 

@@ -46,8 +46,9 @@ class Token:
 
         return money
 
-    def get_hour_mooooooooney(self, loaded_function_dict: Dict[str, str]) -> List[Tuple[datetime, Dict[str, float]]]:
+    def get_hour_mooooooooney(self, loaded_function_dict: Dict[str, str]):
         hour_mooooooooney = []
+        price = []
         start_time = self.transactions[0].date_time
         end_time = self.transactions[-1].date_time
         diff = end_time - start_time
@@ -60,8 +61,9 @@ class Token:
             trans = [tran for tran in trans if utils.is_buy_function_hex(tran.data, loaded_function_dict) or\
                      utils.is_sell_function_hex(tran.data, loaded_function_dict)]
             hour_mooooooooney.append((time_from, self.get_money_from_transactions(trans)))
+            price.append(self.get_price_from_transactions(trans))
 
-        return hour_mooooooooney
+        return hour_mooooooooney, price
 
     def get_transactions_between(self, from_date, to_date) -> List[Transaction]:
         transactions_between = []
@@ -79,3 +81,22 @@ class Token:
             add_money(money, transaction.token_name, transaction.value)
 
         return money
+
+    def get_price_from_transactions(self, transactions: List[Transaction]):
+        money = {}
+
+        for transaction in transactions:
+            add_money(money, transaction.token_name, transaction.value)
+
+        bnb = 0
+        other = 0
+        for key, value in money.items():
+            if key == 'Wrapped BNB':
+                bnb = value
+            else:
+                other += value
+
+        if bnb == 0:
+            return 0
+
+        return bnb / other

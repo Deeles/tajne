@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 def is_add_liquidity_function_hex(hex_code: str, loaded_function_dict: Dict[str, str]) -> bool:
-    add_liquidity_substrings = ["finalize", "addLiquidity"]
+    add_liquidity_substrings = ["finalize", "addliquidity"]
     function_name = get_function_name(hex_code, loaded_function_dict)
     if function_name is None:
         return False
@@ -55,7 +55,9 @@ def get_loaded_function_dict(file: str) -> Dict[str, str]:
     return loaded_function_dict
 
 
-def plot(hour_mooooooney: List[Tuple[datetime, Dict[str, float]]], money_name: str, date_added: datetime):
+def plot(token_name, hour_mooooooney: List[Tuple[datetime, Dict[str, float]]],
+         price, money_name: str, date_added: datetime):
+    plot_price = normalize(price)
     plot_money = []
     index_money = []
 
@@ -69,7 +71,24 @@ def plot(hour_mooooooney: List[Tuple[datetime, Dict[str, float]]], money_name: s
         plot_money.append(money)
 
     plt.plot(index_money, plot_money)
-    plt.xlabel(date_added)
+    plt.plot(index_money, plot_price, color='green')
+    plt.axvline(date_added, color='red')
+    plt.xlabel(token_name)
     plt.tight_layout()
     plt.tick_params(axis='x', labelsize=5)
     plt.show()
+
+
+def normalize(price: List[float]) -> List[float]:
+    multiply_by = 100 / price[-1]
+
+    price_new = [price[0] * multiply_by]
+    last_price = price[0] * multiply_by
+    for part_price in price[1:]:
+        if part_price == 0:
+            price_new.append(last_price)
+            continue
+        last_price = part_price * multiply_by
+        price_new.append(last_price)
+
+    return price_new
