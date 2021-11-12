@@ -13,7 +13,7 @@ class Transaction:
         self.hash = dictionary['hash']
 
     def is_before(self, date_time: datetime) -> bool:
-        return self.date_time < date_time
+        return self.date_time <= date_time
 
     def is_after(self, date_time: datetime) -> bool:
         return self.date_time > date_time

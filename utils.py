@@ -56,7 +56,7 @@ def get_loaded_function_dict(file: str) -> Dict[str, str]:
 
 
 def plot(token_name, hour_mooooooney: List[Tuple[datetime, Dict[str, float]]],
-         price, money_name: str, date_added: datetime):
+         price, liqui, money_name: str, date_added: datetime):
     plot_price = normalize(price)
     plot_money = []
     index_money = []
@@ -72,6 +72,7 @@ def plot(token_name, hour_mooooooney: List[Tuple[datetime, Dict[str, float]]],
 
     plt.plot(index_money, plot_money)
     plt.plot(index_money, plot_price, color='green')
+    plt.plot(index_money, liqui, color='cyan')
     plt.axvline(date_added, color='red')
     plt.xlabel(token_name)
     plt.tight_layout()

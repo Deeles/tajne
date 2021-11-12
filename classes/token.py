@@ -48,6 +48,7 @@ class Token:
 
     def get_hour_mooooooooney(self, loaded_function_dict: Dict[str, str]):
         hour_mooooooooney = []
+        liqui = []
         price = []
         start_time = self.transactions[0].date_time
         end_time = self.transactions[-1].date_time
@@ -55,15 +56,16 @@ class Token:
         days, seconds = diff.days, diff.seconds
         hours = days * 24 + seconds // 3600
         for hour in range(hours + 1):
-            time_from = start_time + timedelta(hours=hour)
+            time_from = start_time + timedelta(hours=hour) - timedelta(seconds=1)
             time_to = start_time + timedelta(hours=hour + 1)
             trans = self.get_transactions_between(time_from, time_to)
-            trans = [tran for tran in trans if utils.is_buy_function_hex(tran.data, loaded_function_dict) or\
+            trans_buy_sell = [tran for tran in trans if utils.is_buy_function_hex(tran.data, loaded_function_dict) or\
                      utils.is_sell_function_hex(tran.data, loaded_function_dict)]
-            hour_mooooooooney.append((time_from, self.get_money_from_transactions(trans)))
-            price.append(self.get_price_from_transactions(trans))
+            hour_mooooooooney.append((time_from, self.get_money_from_transactions(trans_buy_sell)))
+            price.append(self.get_price_from_transactions(trans_buy_sell))
+            liqui.append(self.get_liqui(trans, loaded_function_dict))
 
-        return hour_mooooooooney, price
+        return hour_mooooooooney, price, liqui
 
     def get_transactions_between(self, from_date, to_date) -> List[Transaction]:
         transactions_between = []
@@ -100,3 +102,13 @@ class Token:
             return 0
 
         return bnb / other
+
+    def get_liqui(self, transactions: List[Transaction], loaded_function_dict):
+        liqui = 0
+
+        for transaction in transactions:
+            if utils.is_add_liquidity_function_hex(transaction.data, loaded_function_dict) and\
+                    transaction.token_name == 'Wrapped BNB':
+                liqui += transaction.value
+
+        return liqui

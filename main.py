@@ -17,8 +17,8 @@ def run():
         token = Token(dictionary)
         tokens.append(token)
         print(token.listed_with_liquidity(loaded_function_dict))
-        hour_moooooooney, price = token.get_hour_mooooooooney(loaded_function_dict)
-        utils.plot(token.name, hour_moooooooney, price, 'Wrapped BNB', token.date_added)
+        hour_moooooooney, price, liqui = token.get_hour_mooooooooney(loaded_function_dict)
+        utils.plot(token.name, hour_moooooooney, price, liqui, 'Wrapped BNB', token.date_added)
 
 
 def load_json(file_name: str) -> Dict:
